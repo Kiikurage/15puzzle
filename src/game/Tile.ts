@@ -133,7 +133,6 @@ export class Tile extends Entity {
             const moved = moveTile(tiles, value);
             if (moved) {
                 context.game.getAudioManager().playSound(SOUND_KEY_MOVE);
-                scene.incrementMoveCount();
             }
         });
     }

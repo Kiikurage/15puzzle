@@ -4,7 +4,6 @@ import type {
     UpdateContext,
 } from "../engine/Entity.ts";
 import { Entity } from "../engine/Entity.ts";
-import { Label } from "../engine/Label.ts";
 import { ClearOverlay } from "./ClearOverlay.ts";
 import { createInitialBoard, shuffleBoard } from "./game.ts";
 import { Tile } from "./Tile.ts";
@@ -15,13 +14,9 @@ import { Tile } from "./Tile.ts";
  */
 export class GameScene extends Entity {
     private isCleared = false;
-    private moveCount = 0;
-    private moveCountLabel: Label;
 
     constructor() {
         super();
-        this.moveCountLabel = new Label("Moves: 0", 10, 10, 40);
-        this.addChild(this.moveCountLabel);
         this.initializeBoard();
     }
 
@@ -43,9 +38,6 @@ export class GameScene extends Entity {
             this.removeChild(child);
         }
         this.isCleared = false;
-        this.moveCount = 0;
-        this.moveCountLabel = new Label("Moves: 0", 10, 10, 40);
-        this.addChild(this.moveCountLabel);
         this.initializeBoard();
     }
 
@@ -56,23 +48,6 @@ export class GameScene extends Entity {
      */
     getIsCleared(): boolean {
         return this.isCleared;
-    }
-
-    /**
-     * 操作回数を取得する
-     *
-     * @returns 操作回数
-     */
-    getMoveCount(): number {
-        return this.moveCount;
-    }
-
-    /**
-     * 操作回数をインクリメントする
-     */
-    incrementMoveCount(): void {
-        this.moveCount++;
-        this.moveCountLabel.setText(`Moves: ${this.moveCount}`);
     }
 
     update(_context: UpdateContext): void {
