@@ -40,7 +40,7 @@ export interface ClickContext {
  */
 export abstract class Entity {
     private parent: Entity | undefined;
-    private children: Entity[] = [];
+    private readonly children: Entity[] = [];
 
     /**
      * エンティティの状態を更新する

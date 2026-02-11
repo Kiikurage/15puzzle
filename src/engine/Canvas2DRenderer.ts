@@ -13,8 +13,8 @@ import {
  * グリッドの描画、背景の塗りつぶし、エンティティの描画を担当します。
  */
 export class Canvas2DRenderer extends Renderer {
-    private ctx: CanvasRenderingContext2D;
-    private canvas: HTMLCanvasElement;
+    private readonly ctx: CanvasRenderingContext2D;
+    private readonly canvas: HTMLCanvasElement;
     canvasWidth: number;
     canvasHeight: number;
     private displayWidth: number;

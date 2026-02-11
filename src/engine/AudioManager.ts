@@ -2,8 +2,8 @@
  * WebAudio APIで音声リソースを管理するクラス
  */
 export class AudioManager {
-    private audioContext: AudioContext;
-    private audioBuffers: Map<string, AudioBuffer>;
+    private readonly audioContext: AudioContext;
+    private readonly audioBuffers: Map<string, AudioBuffer>;
 
     constructor() {
         this.audioContext = new AudioContext();

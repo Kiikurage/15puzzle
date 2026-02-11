@@ -4,7 +4,7 @@
  * ゲーム画面への入力イベント（クリック等）を処理します。
  */
 export class InputReceiver {
-    private canvas: HTMLCanvasElement;
+    private readonly canvas: HTMLCanvasElement;
     private onClickCallback:
         | ((screenX: number, screenY: number) => void)
         | null = null;

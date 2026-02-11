@@ -30,7 +30,7 @@ interface AnimationState {
  * タイルクラス
  */
 export class Tile extends Entity {
-    value: number;
+    readonly value: number;
     row: number;
     col: number;
     animationState?: AnimationState;

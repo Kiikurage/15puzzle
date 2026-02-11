@@ -6,9 +6,9 @@ import { Entity } from "./Entity.ts";
  */
 export class Label extends Entity {
     private text: string;
-    private x: number;
-    private y: number;
-    private fontSize: number;
+    private readonly x: number;
+    private readonly y: number;
+    private readonly fontSize: number;
 
     constructor(text: string, x: number, y: number, fontSize: number = 24) {
         super();

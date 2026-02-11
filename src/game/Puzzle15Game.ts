@@ -11,7 +11,7 @@ import { GameScene } from "./GameScene.ts";
  * Game基底クラスを継承し、15パズル固有の初期化処理を行います
  */
 export class Puzzle15Game extends Game {
-    private scene: GameScene;
+    private readonly scene: GameScene;
 
     constructor(canvasId: string) {
         const canvas = document.getElementById(canvasId) as HTMLCanvasElement;

@@ -8,9 +8,9 @@ import type { Renderer, RendererContext } from "./Renderer";
  * メインループ、エンティティ管理を行います
  */
 export class Game {
-    protected renderer: Renderer;
-    protected inputReceiver: InputReceiver;
-    protected audioManager: AudioManager;
+    protected readonly renderer: Renderer;
+    protected readonly inputReceiver: InputReceiver;
+    protected readonly audioManager: AudioManager;
     protected entities: Entity[] = [];
     protected lastUpdateTime: number = Date.now();
 

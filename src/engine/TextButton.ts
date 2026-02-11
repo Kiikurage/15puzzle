@@ -10,12 +10,12 @@ import { Entity } from "./Entity.ts";
  * テキストボタンエンティティ
  */
 export class TextButton extends Entity {
-    private text: string;
-    private x: number;
-    private y: number;
-    private width: number;
-    private height: number;
-    private onClickCallback: (context: ClickContext) => void;
+    private readonly text: string;
+    private readonly x: number;
+    private readonly y: number;
+    private readonly width: number;
+    private readonly height: number;
+    private readonly onClickCallback: (context: ClickContext) => void;
 
     constructor(
         text: string,

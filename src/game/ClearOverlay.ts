@@ -28,7 +28,7 @@ interface Particle {
  * 画面全体を覆う半透明の黒色で、中央に「CLEAR」と表示します
  */
 export class ClearOverlay extends Entity {
-    private particles: Particle[] = [];
+    private readonly particles: Particle[] = [];
 
     constructor() {
         super();
