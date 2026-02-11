@@ -9,6 +9,7 @@ import {
 	CELL_SIZE,
 	canvasToWorldX,
 	canvasToWorldY,
+	SOUND_KEY_MOVE,
 	worldToCanvasX,
 	worldToCanvasY,
 } from "./constants";
@@ -128,7 +129,10 @@ export class Tile extends Entity {
 				}
 				queue.push(...entity.getChildren());
 			}
-			moveTile(tiles, value);
+			const moved = moveTile(tiles, value);
+			if (moved) {
+				context.game.getAudioManager().playSound(SOUND_KEY_MOVE);
+			}
 		});
 	}
 }

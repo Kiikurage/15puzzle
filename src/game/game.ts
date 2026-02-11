@@ -58,24 +58,24 @@ export function moveTile(
 	entities: Entity[],
 	tileValue: number,
 	animationDuration: number = 200,
-): void {
+): boolean {
 	const tiles = entities as Tile[];
 
 	const targetTile = tiles.find((t) => t.value === tileValue);
 	if (targetTile === undefined) {
-		return;
+		return false;
 	}
 
 	const emptyPos = findEmptyPosition(tiles);
 	if (emptyPos === undefined) {
-		return;
+		return false;
 	}
 
 	const isSameRow = targetTile.row === emptyPos.row;
 	const isSameCol = targetTile.col === emptyPos.col;
 
 	if (!isSameRow && !isSameCol) {
-		return;
+		return false;
 	}
 
 	const tilesToMove: Tile[] = [];
@@ -124,6 +124,8 @@ export function moveTile(
 			tile.row += targetTile.row < emptyPos.row ? 1 : -1;
 		}
 	}
+
+	return true;
 }
 
 /**

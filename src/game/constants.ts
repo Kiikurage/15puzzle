@@ -2,6 +2,9 @@
  * ゲーム定数
  */
 
+// 効果音キー
+export const SOUND_KEY_MOVE = "move";
+
 // ワールド座標系（ゲームロジック用）
 export const GRID_SIZE = 4; // 4x4グリッド
 

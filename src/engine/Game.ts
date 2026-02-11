@@ -1,6 +1,7 @@
 import type { Entity, HitTestContext, UpdateContext } from "./Entity";
 import type { InputReceiver } from "./InputReceiver";
 import type { Renderer, RendererContext } from "./Renderer";
+import type { AudioManager } from "./AudioManager.ts";
 
 /**
  * 汎用ゲームエンジンの基底クラス
@@ -9,17 +10,23 @@ import type { Renderer, RendererContext } from "./Renderer";
 export class Game {
 	protected renderer: Renderer;
 	protected inputReceiver: InputReceiver;
+	protected audioManager: AudioManager;
 	protected entities: Entity[] = [];
-	protected onUpdateCallbacks = new Set<() => void>();
 	protected lastUpdateTime: number = Date.now();
 
 	constructor(
 		_canvasId: string,
 		renderer: Renderer,
 		inputReceiver: InputReceiver,
+		audioManager: AudioManager,
 	) {
 		this.renderer = renderer;
 		this.inputReceiver = inputReceiver;
+		this.audioManager = audioManager;
+	}
+
+	getAudioManager(): AudioManager {
+		return this.audioManager;
 	}
 
 	get canvasWidth(): number {
@@ -40,10 +47,6 @@ export class Game {
 
 	request(system: (entities: Entity[]) => void): void {
 		system(this.entities);
-	}
-
-	onUpdate(callback: () => void): void {
-		this.onUpdateCallbacks.add(callback);
 	}
 
 	start(): void {
@@ -87,10 +90,6 @@ export class Game {
 			for (const child of entity.getChildren()) {
 				queue.push(child);
 			}
-		}
-
-		for (const callback of this.onUpdateCallbacks) {
-			callback();
 		}
 	}
 
