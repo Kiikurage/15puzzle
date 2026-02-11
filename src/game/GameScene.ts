@@ -24,7 +24,7 @@ export class GameScene extends Entity {
 	 * ボードを初期化する
 	 */
 	private initializeBoard(): void {
-		const tiles = shuffleBoard(createInitialBoard(), 1);
+		const tiles = shuffleBoard(createInitialBoard(), 100);
 		for (const tile of tiles) {
 			this.addChild(tile);
 		}
