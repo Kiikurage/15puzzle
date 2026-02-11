@@ -1,0 +1,23 @@
+import { Canvas2DRenderer } from "../engine/Canvas2DRenderer.ts";
+import { Game } from "../engine/Game.ts";
+import { InputReceiver } from "../engine/InputReceiver.ts";
+import { BUFFER_HEIGHT, BUFFER_WIDTH } from "./constants.ts";
+import { GameScene } from "./GameScene.ts";
+
+/**
+ * 15パズル専用ゲームクラス
+ * Game基底クラスを継承し、15パズル固有の初期化処理を行います
+ */
+export class Puzzle15Game extends Game {
+	private scene: GameScene;
+
+	constructor(canvasId: string) {
+		const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
+		const renderer = new Canvas2DRenderer(canvas, BUFFER_WIDTH, BUFFER_HEIGHT);
+		const inputReceiver = new InputReceiver(canvas);
+		super(canvasId, renderer, inputReceiver);
+
+		this.scene = new GameScene();
+		this.addEntity(this.scene);
+	}
+}
