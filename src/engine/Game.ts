@@ -1,154 +1,154 @@
+import type { AudioManager } from "./AudioManager.ts";
 import type { Entity, HitTestContext, UpdateContext } from "./Entity";
 import type { InputReceiver } from "./InputReceiver";
 import type { Renderer, RendererContext } from "./Renderer";
-import type { AudioManager } from "./AudioManager.ts";
 
 /**
  * 汎用ゲームエンジンの基底クラス
  * メインループ、エンティティ管理を行います
  */
 export class Game {
-	protected renderer: Renderer;
-	protected inputReceiver: InputReceiver;
-	protected audioManager: AudioManager;
-	protected entities: Entity[] = [];
-	protected lastUpdateTime: number = Date.now();
+    protected renderer: Renderer;
+    protected inputReceiver: InputReceiver;
+    protected audioManager: AudioManager;
+    protected entities: Entity[] = [];
+    protected lastUpdateTime: number = Date.now();
 
-	constructor(
-		_canvasId: string,
-		renderer: Renderer,
-		inputReceiver: InputReceiver,
-		audioManager: AudioManager,
-	) {
-		this.renderer = renderer;
-		this.inputReceiver = inputReceiver;
-		this.audioManager = audioManager;
-	}
+    constructor(
+        _canvasId: string,
+        renderer: Renderer,
+        inputReceiver: InputReceiver,
+        audioManager: AudioManager,
+    ) {
+        this.renderer = renderer;
+        this.inputReceiver = inputReceiver;
+        this.audioManager = audioManager;
+    }
 
-	getAudioManager(): AudioManager {
-		return this.audioManager;
-	}
+    getAudioManager(): AudioManager {
+        return this.audioManager;
+    }
 
-	get canvasWidth(): number {
-		return this.renderer.canvasWidth;
-	}
+    get canvasWidth(): number {
+        return this.renderer.canvasWidth;
+    }
 
-	get canvasHeight(): number {
-		return this.renderer.canvasHeight;
-	}
+    get canvasHeight(): number {
+        return this.renderer.canvasHeight;
+    }
 
-	protected updateCanvasSize(): void {
-		this.renderer.updateCanvasSize();
-	}
+    protected updateCanvasSize(): void {
+        this.renderer.updateCanvasSize();
+    }
 
-	addEntity(entity: Entity): void {
-		this.entities.push(entity);
-	}
+    addEntity(entity: Entity): void {
+        this.entities.push(entity);
+    }
 
-	request(system: (entities: Entity[]) => void): void {
-		system(this.entities);
-	}
+    request(system: (entities: Entity[]) => void): void {
+        system(this.entities);
+    }
 
-	start(): void {
-		const mainLoop = () => {
-			const now = Date.now();
+    start(): void {
+        const mainLoop = () => {
+            const now = Date.now();
 
-			this.update(now);
-			this.render(now);
+            this.update(now);
+            this.render(now);
 
-			requestAnimationFrame(mainLoop);
-		};
+            requestAnimationFrame(mainLoop);
+        };
 
-		mainLoop();
+        mainLoop();
 
-		this.inputReceiver.setClickCallback((screenX, screenY) => {
-			this.handleClick(screenX, screenY);
-		});
+        this.inputReceiver.setClickCallback((screenX, screenY) => {
+            this.handleClick(screenX, screenY);
+        });
 
-		window.addEventListener("resize", () => {
-			this.updateCanvasSize();
-		});
-	}
+        window.addEventListener("resize", () => {
+            this.updateCanvasSize();
+        });
+    }
 
-	update(now: number): void {
-		const elapsedTime = now - this.lastUpdateTime;
-		this.lastUpdateTime = now;
-		const context: UpdateContext = { now, elapsedTime };
-		const queue: Entity[] = [];
+    update(now: number): void {
+        const elapsedTime = now - this.lastUpdateTime;
+        this.lastUpdateTime = now;
+        const context: UpdateContext = { now, elapsedTime };
+        const queue: Entity[] = [];
 
-		for (const entity of this.entities) {
-			queue.push(entity);
-		}
+        for (const entity of this.entities) {
+            queue.push(entity);
+        }
 
-		while (queue.length > 0) {
-			const entity = queue.shift();
-			if (entity === undefined) {
-				break;
-			}
-			entity.update(context);
+        while (queue.length > 0) {
+            const entity = queue.shift();
+            if (entity === undefined) {
+                break;
+            }
+            entity.update(context);
 
-			for (const child of entity.getChildren()) {
-				queue.push(child);
-			}
-		}
-	}
+            for (const child of entity.getChildren()) {
+                queue.push(child);
+            }
+        }
+    }
 
-	render(now: number): void {
-		const rendererContext: RendererContext = {
-			canvasWidth: this.canvasWidth,
-			canvasHeight: this.canvasHeight,
-			now,
-		};
+    render(now: number): void {
+        const rendererContext: RendererContext = {
+            canvasWidth: this.canvasWidth,
+            canvasHeight: this.canvasHeight,
+            now,
+        };
 
-		const allEntities: Entity[] = [];
-		const queue: Entity[] = [...this.entities];
+        const allEntities: Entity[] = [];
+        const queue: Entity[] = [...this.entities];
 
-		while (queue.length > 0) {
-			const entity = queue.shift();
-			if (entity === undefined) {
-				break;
-			}
-			allEntities.push(entity!);
+        while (queue.length > 0) {
+            const entity = queue.shift();
+            if (entity === undefined) {
+                break;
+            }
+            allEntities.push(entity!);
 
-			for (const child of entity.getChildren()) {
-				queue.push(child);
-			}
-		}
+            for (const child of entity.getChildren()) {
+                queue.push(child);
+            }
+        }
 
-		this.renderer.render(rendererContext, allEntities);
-	}
+        this.renderer.render(rendererContext, allEntities);
+    }
 
-	private handleClick(screenX: number, screenY: number): void {
-		const canvasCoordinates = this.renderer.screenToCanvasCoordinates(
-			screenX,
-			screenY,
-		);
+    private handleClick(screenX: number, screenY: number): void {
+        const canvasCoordinates = this.renderer.screenToCanvasCoordinates(
+            screenX,
+            screenY,
+        );
 
-		const hitContext: HitTestContext = {
-			canvasX: canvasCoordinates.screenX,
-			canvasY: canvasCoordinates.screenY,
-		};
+        const hitContext: HitTestContext = {
+            canvasX: canvasCoordinates.screenX,
+            canvasY: canvasCoordinates.screenY,
+        };
 
-		const allEntities: Entity[] = [];
-		const queue: Entity[] = [...this.entities];
+        const allEntities: Entity[] = [];
+        const queue: Entity[] = [...this.entities];
 
-		while (queue.length > 0) {
-			const entity = queue.shift();
-			if (entity === undefined) {
-				break;
-			}
-			allEntities.push(entity!);
+        while (queue.length > 0) {
+            const entity = queue.shift();
+            if (entity === undefined) {
+                break;
+            }
+            allEntities.push(entity!);
 
-			for (const child of entity.getChildren()) {
-				queue.push(child);
-			}
-		}
+            for (const child of entity.getChildren()) {
+                queue.push(child);
+            }
+        }
 
-		for (let i = allEntities.length - 1; i >= 0; i--) {
-			if (allEntities[i]!.hitTest(hitContext)) {
-				allEntities[i]!.onClick({ game: this });
-				return;
-			}
-		}
-	}
+        for (let i = allEntities.length - 1; i >= 0; i--) {
+            if (allEntities[i]!.hitTest(hitContext)) {
+                allEntities[i]!.onClick({ game: this });
+                return;
+            }
+        }
+    }
 }

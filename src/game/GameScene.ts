@@ -1,78 +1,103 @@
 import type {
-	HitTestContext,
-	RenderContext,
-	UpdateContext,
+    HitTestContext,
+    RenderContext,
+    UpdateContext,
 } from "../engine/Entity.ts";
 import { Entity } from "../engine/Entity.ts";
+import { Label } from "../engine/Label.ts";
 import { ClearOverlay } from "./ClearOverlay.ts";
 import { createInitialBoard, shuffleBoard } from "./game.ts";
-import type { Tile } from "./Tile.ts";
+import { Tile } from "./Tile.ts";
 
 /**
  * 15パズルのゲームシーン
  * Tileを子Entityとして内包し、ゲーム状態を管理します
  */
 export class GameScene extends Entity {
-	private isCleared = false;
+    private isCleared = false;
+    private moveCount = 0;
+    private moveCountLabel: Label;
 
-	constructor() {
-		super();
-		this.initializeBoard();
-	}
+    constructor() {
+        super();
+        this.moveCountLabel = new Label("Moves: 0", 10, 10, 40);
+        this.addChild(this.moveCountLabel);
+        this.initializeBoard();
+    }
 
-	/**
-	 * ボードを初期化する
-	 */
-	private initializeBoard(): void {
-		const tiles = shuffleBoard(createInitialBoard(), 100);
-		for (const tile of tiles) {
-			this.addChild(tile);
-		}
-	}
+    /**
+     * ボードを初期化する
+     */
+    private initializeBoard(): void {
+        const tiles = shuffleBoard(createInitialBoard(), 100);
+        for (const tile of tiles) {
+            this.addChild(tile);
+        }
+    }
 
-	/**
-	 * ゲームをリセットする
-	 */
-	reset(): void {
-		for (const child of this.getChildren().slice()) {
-			this.removeChild(child);
-		}
-		this.isCleared = false;
-		this.initializeBoard();
-	}
+    /**
+     * ゲームをリセットする
+     */
+    reset(): void {
+        for (const child of this.getChildren().slice()) {
+            this.removeChild(child);
+        }
+        this.isCleared = false;
+        this.moveCount = 0;
+        this.moveCountLabel = new Label("Moves: 0", 10, 10, 40);
+        this.addChild(this.moveCountLabel);
+        this.initializeBoard();
+    }
 
-	/**
-	 * クリア状態を取得する
-	 *
-	 * @returns クリアしていればtrue
-	 */
-	getIsCleared(): boolean {
-		return this.isCleared;
-	}
+    /**
+     * クリア状態を取得する
+     *
+     * @returns クリアしていればtrue
+     */
+    getIsCleared(): boolean {
+        return this.isCleared;
+    }
 
-	update(_context: UpdateContext): void {
-		if (this.isCleared) {
-			return;
-		}
+    /**
+     * 操作回数を取得する
+     *
+     * @returns 操作回数
+     */
+    getMoveCount(): number {
+        return this.moveCount;
+    }
 
-		const children = this.getChildren() as Tile[];
+    /**
+     * 操作回数をインクリメントする
+     */
+    incrementMoveCount(): void {
+        this.moveCount++;
+        this.moveCountLabel.setText(`Moves: ${this.moveCount}`);
+    }
 
-		for (const tile of children) {
-			const expectedRow = Math.floor((tile.value - 1) / 4);
-			const expectedCol = (tile.value - 1) % 4;
+    update(_context: UpdateContext): void {
+        if (this.isCleared) {
+            return;
+        }
 
-			if (tile.row !== expectedRow || tile.col !== expectedCol) {
-				return;
-			}
-		}
+        const children = this.getDescendantsAs(Tile);
 
-		this.isCleared = true;
-		this.addChild(new ClearOverlay());
-	}
+        for (const tile of children) {
+            const expectedRow = Math.floor((tile.value - 1) / 4);
+            const expectedCol = (tile.value - 1) % 4;
 
-	render(_context: RenderContext): void {}
+            if (tile.row !== expectedRow || tile.col !== expectedCol) {
+                return;
+            }
+        }
 
-	hitTest(_context: HitTestContext): boolean {
-		return false;
-	}
+        this.isCleared = true;
+        this.addChild(new ClearOverlay());
+    }
+
+    render(_context: RenderContext): void {}
+
+    hitTest(_context: HitTestContext): boolean {
+        return false;
+    }
 }
