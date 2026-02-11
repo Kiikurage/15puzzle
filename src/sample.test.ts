@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 
-describe('sample test', () => {
-    it('should pass', () => {
-        expect(1 + 1).toBe(2)
-    })
-})
+describe("sample test", () => {
+	it("should pass", () => {
+		expect(1 + 1).toBe(2);
+	});
+});

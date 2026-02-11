@@ -52,7 +52,7 @@ function getMovableTiles(tiles: Tile[]): Tile[] {
 }
 
 /**
- * 指定したタイルを空きマスへ移動
+ * 指定したタイルを空きマスへ移動（複数タイル対応）
  */
 export function moveTile(
 	entities: Entity[],
@@ -71,27 +71,59 @@ export function moveTile(
 		return;
 	}
 
-	const isAdjacent =
-		(targetTile.row === emptyPos.row &&
-			Math.abs(targetTile.col - emptyPos.col) === 1) ||
-		(targetTile.col === emptyPos.col &&
-			Math.abs(targetTile.row - emptyPos.row) === 1);
+	const isSameRow = targetTile.row === emptyPos.row;
+	const isSameCol = targetTile.col === emptyPos.col;
 
-	if (!isAdjacent) {
+	if (!isSameRow && !isSameCol) {
 		return;
+	}
+
+	const tilesToMove: Tile[] = [];
+
+	if (isSameRow) {
+		const minCol = Math.min(targetTile.col, emptyPos.col);
+		const maxCol = Math.max(targetTile.col, emptyPos.col);
+
+		for (const tile of tiles) {
+			if (
+				tile.row === targetTile.row &&
+				tile.col >= minCol &&
+				tile.col <= maxCol
+			) {
+				tilesToMove.push(tile);
+			}
+		}
+	} else {
+		const minRow = Math.min(targetTile.row, emptyPos.row);
+		const maxRow = Math.max(targetTile.row, emptyPos.row);
+
+		for (const tile of tiles) {
+			if (
+				tile.col === targetTile.col &&
+				tile.row >= minRow &&
+				tile.row <= maxRow
+			) {
+				tilesToMove.push(tile);
+			}
+		}
 	}
 
 	const now = Date.now();
 
-	targetTile.animationState = {
-		fromRow: targetTile.row,
-		fromCol: targetTile.col,
-		startTime: now,
-		endTime: now + animationDuration,
-	};
+	for (const tile of tilesToMove) {
+		tile.animationState = {
+			fromRow: tile.row,
+			fromCol: tile.col,
+			startTime: now,
+			endTime: now + animationDuration,
+		};
 
-	targetTile.row = emptyPos.row;
-	targetTile.col = emptyPos.col;
+		if (isSameRow) {
+			tile.col += targetTile.col < emptyPos.col ? 1 : -1;
+		} else {
+			tile.row += targetTile.row < emptyPos.row ? 1 : -1;
+		}
+	}
 }
 
 /**
